@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/companies_list.css' %}">
+<p>Наличности</p>
+
+{% if companies %}
+    <table>
+        <tr>
+            <th>Фирма</th>
+            <th>Булстат/ЕИК</th>
+            <th>МОЛ</th>
+            <th>Адрес</th>
+        </tr>
+        {% for company in companies %}
+            <tr>
+                <td>{{company.company_name}}</td>
+                <td>{{company.bulstat}}</td>
+                <td>{{company.responsible_person}}</td>
+                <td>{{company.company_address}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% endblock content %}

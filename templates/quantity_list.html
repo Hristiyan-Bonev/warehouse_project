@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static '/css/quantity_list.css' %}">
+<p>Наличности</p>
+
+{% if articles %}
+    <table>
+        <tr>
+            <th>Артикул</th>
+            <th>Наличност</th>
+        </tr>
+        {% for article in articles %}
+            <tr>
+                <td>{{article.article_name}}</td>
+                <td>{{article.quantity}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% endblock content %}

@@ -4,7 +4,9 @@
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <table border="1">
+        {{ form.as_table }}
+    </table>
     <button type="submit" class="btn btn-primary">Добави фирма</button>
 </form>
 {% endblock content %}

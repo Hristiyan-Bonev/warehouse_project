@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <html>
   <head>
@@ -37,7 +38,7 @@
               <!--</li>-->
 
               <li class="nav-item">
-                <a class="nav-link" href="/create_query">Направи заявка</a>
+                <a class="nav-link" href="{% url 'new_order' %}">Направи заявка</a>
               </li>
                 <li class="nav-item">
                 <a class="nav-link" href="/add_article">Добави артикул</a>

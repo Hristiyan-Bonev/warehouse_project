@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{{ formset.management_form }}
+<form method="post">
+    {% csrf_token %}
+    <table border="1">
+            {{company_form|crispy}}
+            {{product_form|crispy}}
+    </table>
+    <button type="submit" class="btn btn-primary">Направи заявка</button>
+</form>
+
+
+
+{% endblock content %}

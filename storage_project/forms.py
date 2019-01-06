@@ -1,5 +1,7 @@
 from django import forms
-from .models import Article, Company
+from .models import Article, Company, SellQuery, CustomUser
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.forms import modelformset_factory, inlineformset_factory
 
 
 class AddArticleForm(forms.ModelForm):
@@ -16,7 +18,6 @@ class AddArticleForm(forms.ModelForm):
 
 
 class AddCompanyForm(forms.ModelForm):
-
 
     class Meta:
         model = Company
@@ -38,5 +39,32 @@ class AddCompanyForm(forms.ModelForm):
         # TODO : MAKE ERROR MESSAGES IN BULGARIAN
 
 
-class QueryForm(forms.ModelForm):
-    pass
+class ProductOrderForm(forms.ModelForm):
+
+    article_list = forms.ModelChoiceField(queryset=Article.objects.all())
+    companies_list = forms.ModelChoiceField(queryset=Company.objects.all())
+
+    class Meta:
+        model = Article
+        exclude = ('__all__',)
+
+
+class CompanyOrderForm(forms.ModelForm):
+
+    class Meta:
+        model = Company
+        fields = ['company_name']
+
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta(UserCreationForm):
+        model = CustomUser
+        fields = ('username', 'email')
+
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = CustomUser
+        fields = UserChangeForm.Meta.fields

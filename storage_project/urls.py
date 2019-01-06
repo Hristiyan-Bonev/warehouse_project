@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import IndexView, QuantityListView, CompanyListView, AddArticleView, AddCompanyView
+from .views import IndexView, QuantityListView, CompanyListView, AddArticleView, AddCompanyView, NewOrderView
 
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('companies', CompanyListView.as_view(), name='companies'),
     path('add_article', AddArticleView.as_view(), name='add_item'),
     path('add_company', AddCompanyView.as_view(), name='add_company'),
+    path('new_order', NewOrderView.as_view(), name='new_order'),
 ]

@@ -39,21 +39,24 @@ class AddCompanyForm(forms.ModelForm):
         # TODO : MAKE ERROR MESSAGES IN BULGARIAN
 
 
-class ProductOrderForm(forms.ModelForm):
-
-    article_list = forms.ModelChoiceField(queryset=Article.objects.all())
-    companies_list = forms.ModelChoiceField(queryset=Company.objects.all())
-
-    class Meta:
-        model = Article
-        exclude = ('__all__',)
-
-
 class CompanyOrderForm(forms.ModelForm):
+    article_name = forms.ModelChoiceField(queryset=Article.objects.all(),
+                                          widget=forms.Select(attrs={
+                                              'class': "product_class form-control",
+                                              'id': 'product_id',
+                                              'autocomplete': 'off',
+                                              'style': 'width:50%'
+                                          }))
 
     class Meta:
-        model = Company
-        fields = ['company_name']
+        model = SellQuery
+        fields = ['company']
+        labels = {
+            'company': 'Избери фирма'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CompanyOrderForm, self).__init__(*args, **kwargs)
 
 
 

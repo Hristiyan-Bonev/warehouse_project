@@ -1,17 +1,62 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load staticfiles %}
 
 {% block content %}
-{{ formset.management_form }}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" href="{% static '/css/quantity_list.css' %}">
+<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.css" rel="stylesheet"/>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static '/js/filter_product.js' %}"></script>
+{{ ReadyOrderFormset.management_form }}
+
 <form method="post">
+
     {% csrf_token %}
-    <table border="1">
-            {{company_form|crispy}}
-            {{product_form|crispy}}
-    </table>
-    <button type="submit" class="btn btn-primary">Направи заявка</button>
+    <div class="container">
+        {{company_form|crispy}}
+            <div class="alert alert-danger" role="alert" id="error_message">
+                Не може да направите заявка за продукт, чиито наличност е по-малка от поръчаната стойност
+            </div>
+             <div class="alert alert-danger" role="alert" id="error_message2">
+                Няма достатъчно наличност в склада.
+            </div>
+        <div class="input-group">
+
+                <div class="col-md-6">
+                <div>Търси продукт:</div>
+                <input type="text" class="form-control typeahead border-primary" name="query" id="articles" placeholder="Намери продукт..." data-provide="typeahead" autocomplete="off">
+                </div>
+                <div class="col-md-2">
+                    <div>Наличност в склад:</div>
+                    <div class="center-text form-control border-primary" id="quantity_available"> </div>
+                </div>
+                <div class="col-md-2">
+                    <div>Поръчка брой:</div>
+                    <input type="number" size="2" max_length="2" class="form-control border-primary" name="query_quantity" id="quantity" placeholder="Брой" autocomplete="off">
+                </div>
+                <div class="col-md-6" style="margin-top:20px">
+                    <div class="float-right">
+                        <button type="button" class="btn btn-outline-success" onclick="submitRow()" >Добави</button>
+                    </div>
+                </div>
+        </div>
+        <div id="order_list" style="padding-top:50px">
+
+        </div>
+        {{ form}} <br/><br/>
+        <button type="submit" class="btn btn-primary" style="margin-top:25px">Направи заявка</button>
+    </div>
 </form>
 
 
+<script>
+$(document).ready(function() {
+    $("#error_message").hide()
+    $('#error_message2').hide()
 
+    $('.product_class').select2()
+
+  });
+</script>
 {% endblock content %}

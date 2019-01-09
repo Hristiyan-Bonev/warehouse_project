@@ -35,7 +35,10 @@ class SellQuery(models.Model):
     id = models.IntegerField(primary_key=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    order_list = models.ManyToManyField(Article)
+    order_list = models.TextField(db_column='order_list')
     order_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        managed = True
+        # db_table = 'storage_project_sellquery'
 

@@ -66,21 +66,31 @@ class NewOrderView(FormView):
         return context_data
 
     def post(self, request, *args, **kwargs):
-
+        form = CompanyOrderForm(request.POST)
         products = [x for x in self.request.POST if 'product' in x]
+        import ipdb;
+        ipdb.set_trace()
         query_data = {}
+        if form.is_valid():
+            for product in products:
+                product_pk, requested_quantity= self.request.POST.get(product, None).split('_')
+                print(requested_quantity)
+                search_product = Article.objects.get(pk=product_pk)
+                search_product.quantity -= int(requested_quantity)
+                search_product.save()
 
-        for product in products:
-            product_pk, requested_quantity= self.request.POST.get(product, None).split('_')
-            print(requested_quantity)
-            search_product = Article.objects.get(pk=product_pk)
-            # form = ProductOrderForm(instance=search_product)
-            search_product.quantity -= int(requested_quantity)
-            # search_product.save()
+                query_data[search_product.article_name] = int(requested_quantity)
 
-            query_data[search_product.article_name] = int(requested_quantity)
+            form.order_list = query_data
+            form.seller_id = 1
+            form.save()
 
-        print(query_data)
+        else:
+            return render(request, self.template_name, {'form': form})
+
+
+
+        return HttpResponse('/add_company/')
 
 
 def get_articles(request):

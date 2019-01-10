@@ -14,7 +14,7 @@
 
     {% csrf_token %}
     <div class="container">
-        {{company_form|crispy}}
+        {{ company_form }}
             <div class="alert alert-danger" role="alert" id="error_message">
                 Не може да направите заявка за продукт, чиито наличност е по-малка от поръчаната стойност
             </div>
@@ -55,7 +55,7 @@ $(document).ready(function() {
     $("#error_message").hide()
     $('#error_message2').hide()
 
-    $('.product_class').select2()
+    $('#company').select2()
 
   });
 </script>

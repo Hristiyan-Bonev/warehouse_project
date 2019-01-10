@@ -40,20 +40,18 @@ class AddCompanyForm(forms.ModelForm):
 
 
 class CompanyOrderForm(forms.ModelForm):
-    article_name = forms.ModelChoiceField(queryset=Article.objects.all(),
+    company = forms.ModelChoiceField(queryset=Company.objects.all(),
                                           widget=forms.Select(attrs={
-                                              'class': "product_class form-control",
-                                              'id': 'product_id',
+                                              'class': "company_class typeahead form-control border-primary",
+                                              'id': 'company',
                                               'autocomplete': 'off',
                                               'style': 'width:50%'
-                                          }))
-
+                                          }),
+                                     label="Избери фирма")
     class Meta:
         model = SellQuery
         fields = ['company']
-        labels = {
-            'company': 'Избери фирма'
-        }
+
 
     def __init__(self, *args, **kwargs):
         super(CompanyOrderForm, self).__init__(*args, **kwargs)

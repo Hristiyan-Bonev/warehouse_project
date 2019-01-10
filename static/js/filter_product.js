@@ -81,9 +81,9 @@ function submitRow(e){
         return
     }
 
-    if (validateQuantity()){
+//    if (validateQuantity()){
     addHeader();;
     appendRow(article, $("#quantity").val());
     clearFields()
-    }
+//    }
 }

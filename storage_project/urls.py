@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import IndexView, QuantityListView, CompanyListView, AddArticleView, AddCompanyView, NewOrderView, get_articles
+from .views import IndexView, QuantityListView, CompanyListView, AddArticleView, AddCompanyView, NewOrderView, get_articles, CreateAcountView
+from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
@@ -26,5 +28,7 @@ urlpatterns = [
     path('add_article', AddArticleView.as_view(), name='add_item'),
     path('add_company', AddCompanyView.as_view(), name='add_company'),
     path('new_order', NewOrderView.as_view(), name='new_order'),
-    path('get_articles/', get_articles, name='get_articles')
+    path('get_articles/', get_articles, name='get_articles'),
+    path('sign_up', CreateAcountView.as_view(), name='create_account'),
+    # path('login', auth_views.login, {'template_name': 'sign_in.html'}, name='login')
 ]

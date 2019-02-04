@@ -1,0 +1,14 @@
+{% load crispy_forms_tags %}
+{% block content %}
+ <div class="container">
+      <form method="post" autocomplete="off">
+        {% csrf_token %}
+          <div class="form-row">
+                 <div class="form-group col-md-8 offset-md-2 mb-0">
+                {{ UserAuthenticationForm | crispy}}
+              </div>
+          </div>
+          <button type="submit" class="btn btn-info float-right">Login<i class="fas fa-chevron-circle-right"></i>
+      </form>
+</div>
+{% endblock %}

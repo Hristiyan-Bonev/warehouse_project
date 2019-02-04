@@ -1,9 +1,9 @@
 from django.views.generic import ListView, TemplateView, CreateView, FormView
-from django.urls import reverse_lazy
-from django.http import HttpResponse
+from django.urls import reverse_lazy, reverse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core import serializers
-from .models import Article, Company, SellQuery
-from .forms import AddArticleForm, AddCompanyForm, CompanyOrderForm
+from .models import Article, Company, SellQuery, CustomUser
+from .forms import AddArticleForm, AddCompanyForm, CompanyOrderForm, CustomUserCreationForm
 import json
 
 
@@ -66,7 +66,7 @@ class NewOrderView(FormView):
         return context_data
 
     def post(self, request, *args, **kwargs):
-        form = CompanyOrderForm(request.POST)
+        form = CompanyOrderForm(data=request.POST)
         products = [x for x in self.request.POST if 'product' in x]
         import ipdb;
         ipdb.set_trace()
@@ -79,18 +79,31 @@ class NewOrderView(FormView):
                 search_product.quantity -= int(requested_quantity)
                 search_product.save()
 
-                query_data[search_product.article_name] = int(requested_quantity)
+                query_data[search_product.pk] = int(requested_quantity)
 
-            form.order_list = query_data
-            form.seller_id = 1
+            form.order_list = json.dumps(query_data)
+            form.seller_id = CustomUser.objects.get(id=1).first_name
             form.save()
 
         else:
             return render(request, self.template_name, {'form': form})
+        return HttpResponseRedirect('/add_company/')
+
+    def form_valid(self, form):
+        model_instance = form.save(commit=False)
+        model_instance.seller_id = self.request.user
 
 
+class CreateAcountView(CreateView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
+    template_name = 'sign_up.html'
 
-        return HttpResponse('/add_company/')
+    def post(self, request, *args, **kwargs):
+        form = CustomUserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('create_acount'))
 
 
 def get_articles(request):

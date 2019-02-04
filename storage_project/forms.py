@@ -1,7 +1,7 @@
 from django import forms
 from .models import Article, Company, SellQuery, CustomUser
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import modelformset_factory, inlineformset_factory
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class AddArticleForm(forms.ModelForm):
@@ -42,12 +42,21 @@ class AddCompanyForm(forms.ModelForm):
 class CompanyOrderForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=Company.objects.all(),
                                           widget=forms.Select(attrs={
-                                              'class': "company_class typeahead form-control border-primary",
+                                              'class': "company_class typeahead crispy form-control border-primary",
                                               'id': 'company',
                                               'autocomplete': 'off',
                                               'style': 'width:50%'
                                           }),
                                      label="Избери фирма")
+
+    # seller_id = forms.ModelChoiceField(queryset=CustomUser.objects.all(),
+    #                                    widget=forms.Select(attrs={
+    #                                        'class': "company_class typeahead form-control border-primary",
+    #                                        'id': 'company',
+    #                                        'autocomplete': 'off',
+    #                                        'style': 'width:50%'
+    #                                    }),
+    #                                    label="Продавач")
     class Meta:
         model = SellQuery
         fields = ['company']
@@ -60,12 +69,48 @@ class CompanyOrderForm(forms.ModelForm):
 
 class CustomUserCreationForm(UserCreationForm):
 
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = ('username', 'email')
+        fields = (
+            'email',
+            'first_name',
+            'last_name',)
+        field_order = (
+            'email',
+            'password',
+            'confirm_password',
+            'first_name',
+            'last_name',
+        )
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        try:
+            CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return email
+        raise forms.ValidationError('This email is already in use.')
+
+    def save(self):
+        object = super().save()
+        return object
+
+    def clean(self):
+        cleaned_data = super(UserCreationForm, self).clean()
+        if cleaned_data['password'] != cleaned_data['confirm_password']:
+            raise forms.ValidationError('Passwords don\'t match')
+        return cleaned_data
+
 
 class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
         fields = UserChangeForm.Meta.fields
+
+class UserAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        pass

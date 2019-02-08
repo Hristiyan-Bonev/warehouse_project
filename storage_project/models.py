@@ -79,29 +79,95 @@ class Company(models.Model):
     responsible_person = models.CharField(max_length=100)
     bulstat = models.CharField(unique=True, max_length=15)
     company_address = models.CharField(max_length=255)
+    company_city = models.CharField(max_length=80)
 
     def __str__(self):
         return self.company_name
 
+    class Meta:
+        verbose_name = 'Company'
+        verbose_name_plural = 'Companies'
+
+
+class Provider(models.Model):
+    id = models.IntegerField(primary_key=True)
+    provider_name = models.CharField(unique=True, max_length=100)
+    provider_city = models.CharField(max_length=20)
+    provider_address = models.CharField(max_length=20)
+    provider_contact_name = models.CharField(max_length=50, blank=True)
+    provider_phone = models.CharField(max_length=10, blank=True)
+
+    def __str__(self):
+        return self.provider_name
+
+
+class Category(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.category_name
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+
+
+class Warehouse(models.Model):
+    id = models.IntegerField(primary_key=True)
+    warehouse_name = models.CharField(unique=True, max_length=50)
+    warehouse_city = models.CharField(max_length=100)
+    warehouse_address = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.warehouse_name
+
 
 class Article(models.Model):
-    article_id = models.IntegerField(primary_key=True)
+    article_id = models.AutoField(primary_key=True)
     article_name = models.CharField(unique=True, max_length=255)
     price = models.DecimalField(decimal_places=2, max_digits=3)
     quantity = models.IntegerField()
+    category = models.ManyToManyField(Category)
+    warehouse = models.ManyToManyField(Warehouse)
 
     def __str__(self):
         return self.article_name
 
 
-class SellQuery(models.Model):
+class Order(models.Model):
+
+    CASH = 'Cash'
+    LEASE = 'Lease'
+
+    PAYMENT_CHOICES = (
+        (CASH, 'Cash'),
+        (LEASE, 'Lease')
+    )
+
     id = models.IntegerField(primary_key=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    order_list = models.TextField(db_column='order_list')
+    order_list = models.ManyToManyField(Article)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
+    total_price = models.DecimalField(decimal_places=2, max_digits=8)
+    payment_method = models.CharField(max_length=5, choices=PAYMENT_CHOICES, default=CASH)
+    note = models.TextField(max_length=200)
 
     class Meta:
         managed = True
-        # db_table = 'storage_project_sellquery'
 
+
+class Delivery(models.Model):
+    id = models.IntegerField(primary_key=True)
+    delivery_list = models.ManyToManyField(Article)
+    delivery_date = models.DateTimeField(auto_now_add=True)
+    delivery_company = models.ForeignKey(Provider, on_delete=models.CASCADE)
+    total_price = models.DecimalField(decimal_places=2, max_digits=8)
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    note = models.TextField(max_length=200)
+
+    class Meta:
+        verbose_name = 'Delivery'
+        verbose_name_plural = 'Deliveries'

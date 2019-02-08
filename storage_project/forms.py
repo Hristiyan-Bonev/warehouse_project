@@ -1,5 +1,5 @@
 from django import forms
-from .models import Article, Company, SellQuery, CustomUser
+from .models import Article, Company, Order, CustomUser
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -58,7 +58,7 @@ class CompanyOrderForm(forms.ModelForm):
     #                                    }),
     #                                    label="Продавач")
     class Meta:
-        model = SellQuery
+        model = Order
         fields = ['company']
 
 

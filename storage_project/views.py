@@ -2,7 +2,7 @@ from django.views.generic import ListView, TemplateView, CreateView, FormView
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core import serializers
-from .models import Article, Company, SellQuery, CustomUser
+from .models import Article, Company, Order, CustomUser
 from .forms import AddArticleForm, AddCompanyForm, CompanyOrderForm, CustomUserCreationForm
 import json
 
@@ -48,13 +48,11 @@ class AddCompanyView(CreateView):
 
 
 class NewOrderView(FormView):
-    model = SellQuery
+    model = Order
     success_url = reverse_lazy('new_order')
-    # form_class = ProductOrderForm
     template_name = 'new_order.html'
     context_object_name = 'articles'
     queryset = Article.objects.all()
-
 
     def get_context_data(self, **kwargs):
         json_serializer = serializers.get_serializer("json")()

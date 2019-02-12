@@ -107,19 +107,20 @@ class CreateAcountView(CreateView):
 def get_articles(request):
 
     if request.is_ajax():
-        data = request.GET.get('term', '').encode('utf-8').decode('utf-8') # Workaround for cyrillic
-        articles_lower = Article.objects.filter(article_name__icontains = data.lower())
+        data = request.GET.get('term', '').encode('utf-8').decode('utf-8')  # Workaround for cyrillic
+        articles_lower = Article.objects.filter(article_name__icontains=data.lower())
         articles_upper = Article.objects.filter(article_name__icontains=data.title())
         articles = articles_lower | articles_upper
 
         results = []
         for article in articles:
             article_json = {}
-            # import ipdb;ipdb.set_trace()
-            article_json['id'] = article.pk
-            article_json['label'] = article.article_name
-            article_json['value'] = article.quantity
-            article_json['price'] = float(article.price)
+            article_json.update({
+                'id': article.pk,
+                'label': article.article_name,
+                'value': article.quantity,
+                'price': float(article.price)
+            }) 
             results.append(article_json)
         data = json.dumps(results)
         print(data)
